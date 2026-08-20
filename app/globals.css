@@ -1,4 +1,4 @@
-@import "tailwindcss";
+/* @import "tailwindcss";
 
 :root {
   --background: #ffffff;
@@ -12,15 +12,51 @@
   --font-mono: var(--font-geist-mono);
 }
 
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
 }
+ */
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+:root {
+  --color-light: #f6f6f6;
+  --color-mauve: #9e6896;
+  --color-plum: #4a2c4e;
+  --color-coral: #df6c76;
+  --color-yellow: #f5eb91;
+}
+
+
+body.login,
+body.register {
+  background-color: var(--color-plum);
+  font-family: 'Inter', sans-serif;
+  color: var(--color-light);
+}
+
+.min-vh-100 {
+  min-height: 100vh !important;
+}
+
+.btn-login {
+  background-color: var(--color-coral);
+  color: var(--color-light);
+  font-weight: 500;
+  border-radius: 12px;
+  padding: 0.75rem;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+  background-color: #c95d66;
+  color: white;
+}
+
+.login .form-label,
+.register .form-label {
+  color: var(--color-light) !important;
 }
