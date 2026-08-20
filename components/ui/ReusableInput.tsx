@@ -4,16 +4,19 @@ import { useState, ChangeEvent } from "react";
 import Form from "react-bootstrap/Form";
 import styles from "../ui/ReusableInput.module.css";
 
-type InputType = "text" | "number" | "email" | "date" | "password";
+type InputType = "text" | "number" | "email" | "date" | "password" | "select" | "counter";
 
 interface ReusableInputProps {
   label: string;
   name: string;
   type: InputType;
-  value: string;
-  onChange: (value: string) => void;
+  value: string | number;
+  onChange: (value: any) => void;
   required?: boolean;
   placeholder?: string;
+  options?: { label: string; value: string }[];
+  onIncrement?: () => void;
+  onDecrement?: () => void;
 }
 
 export default function ReusableInput({
@@ -24,6 +27,9 @@ export default function ReusableInput({
   onChange,
   required = false,
   placeholder = "",
+  options = [],
+  onIncrement,
+  onDecrement,
 }: ReusableInputProps) {
   const [error, setError] = useState<string>("");
   const [touched, setTouched] = useState<boolean>(false);
@@ -35,33 +41,40 @@ export default function ReusableInput({
     fontWeight: 600,
     color: "#333",
     letterSpacing: "0.5px",
+    textTransform: "uppercase" as const,
+    fontSize: 12,
+    marginBottom: 8,
+    display: "block",
   };
 
   const inputStyles = {
     padding: ".8rem",
-    borderRadius: "15px",
+    borderRadius: "8px",
+    border: "1px solid #D9DDE3",
     // Add extra padding on the right if it's a password field so text doesn't hide behind the icon
     paddingRight: type === "password" ? "45px" : ".8rem",
+    fontSize: 15,
   };
 
-  const validate = (val: string): string => {
+  const validate = (val: string | number): string => {
+    const stringVal = String(val);
     // 1. Check required status
-    if (required && !val.trim()) {
+    if (required && !stringVal.trim()) {
       return `${label} is required`;
     }
 
     // 2. Check type-specific validation
-    if (val) {
+    if (stringVal) {
       switch (type) {
         case "email":
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailRegex.test(val)) return "Please enter a valid email address";
+          if (!emailRegex.test(stringVal)) return "Please enter a valid email address";
           break;
         case "number":
-          if (isNaN(Number(val))) return "Please enter a valid number";
+          if (isNaN(Number(stringVal))) return "Please enter a valid number";
           break;
         case "date":
-          const dateVal = new Date(val);
+          const dateVal = new Date(stringVal);
           if (isNaN(dateVal.getTime())) return "Please enter a valid date";
 
           // DOB specific logic: Prevent future dates
@@ -72,7 +85,7 @@ export default function ReusableInput({
     return ""; // No errors
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const val = e.target.value;
     onChange(val);
 
@@ -87,26 +100,72 @@ export default function ReusableInput({
     setError(validate(value));
   };
 
+  if (type === "select") {
+    return (
+      <div className="mb-3">
+        <label style={labelStyles}>
+          {label} {required && <span className="text-danger">*</span>}
+        </label>
+        <select
+          name={name}
+          value={value}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          style={{ ...inputStyles, width: "100%", outline: "none", background: "#fff", color: "#2A2D34" }}
+        >
+          {placeholder && <option value="">{placeholder}</option>}
+          {options.map((opt) => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
+        </select>
+        {error && (
+          <div style={{ fontSize: "0.85rem", marginTop: "4px", color: "#dc3545" }}>
+            {error}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (type === "counter") {
+    return (
+      <div className="mb-3">
+        <label style={labelStyles}>
+          {label} {required && <span className="text-danger">*</span>}
+        </label>
+        <div style={{ display: "flex", border: "1px solid #D9DDE3", borderRadius: 8, overflow: "hidden" }}>
+          <button type="button" onClick={onDecrement} style={{ padding: "12px 16px", background: "#F9FAFB", border: "none", borderRight: "1px solid #D9DDE3", color: "#6B7280", cursor: "pointer", fontWeight: 600 }}>-</button>
+          <input type="text" value={value} readOnly style={{ width: "100%", textAlign: "center", border: "none", fontSize: 15, fontWeight: 600, color: "#2A2D34", outline: "none", background: "#fff" }} />
+          <button type="button" onClick={onIncrement} style={{ padding: "12px 16px", background: "#F9FAFB", border: "none", borderLeft: "1px solid #D9DDE3", color: "#6B7280", cursor: "pointer", fontWeight: 600 }}>+</button>
+        </div>
+        {error && (
+          <div style={{ fontSize: "0.85rem", marginTop: "4px", color: "#dc3545" }}>
+            {error}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   // Determine the actual input type to render
   const currentInputType = type === "password" ? (showPassword ? "text" : "password") : type;
 
   return (
-    <Form.Group className="mb-3" controlId={`input-${name}`}>
-      <Form.Label style={labelStyles}>
+    <div className="mb-3">
+      <label style={labelStyles}>
         {label} {required && <span className="text-danger">*</span>}
-      </Form.Label>
+      </label>
       
       {/* Relative wrapper for absolute icon positioning */}
       <div style={{ position: "relative" }}>
-        <Form.Control
+        <input
           type={currentInputType}
           name={name}
           placeholder={placeholder}
           value={value}
           onChange={handleChange}
           onBlur={handleBlur}
-          isInvalid={!!error}
-          style={inputStyles}
+          style={{ ...inputStyles, width: "100%", outline: "none", background: "#fff", color: "#2A2D34", borderColor: error ? "#dc3545" : "#D9DDE3" }}
         />
         
         {/* Render the eye icon only for password types */}
@@ -148,6 +207,6 @@ export default function ReusableInput({
           {error}
         </div>
       )}
-    </Form.Group>
+    </div>
   );
 }
