@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/ToastContext";
 
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -113,9 +114,9 @@ export default function LoginForm() {
 
           <div className="text-center" style={{ fontSize: "0.85rem", color: "var(--color-mauve)" }}>
             Don't have an account?{" "}
-            <a href="#" style={{ color: "var(--color-coral)" }} className="text-decoration-none fw-semibold border-bottom pb-1">
+            <Link href="/register" style={{ color: "var(--color-coral)" }} className="text-decoration-none fw-semibold border-bottom pb-1">
               Sign up here
-            </a>
+            </Link>
           </div>
         </form>
       </div>

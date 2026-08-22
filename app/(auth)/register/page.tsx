@@ -4,8 +4,11 @@ import { useState, FormEvent, useEffect } from "react";
 import ReusableInput from "@/components/ui/ReusableInput";
 import styles from "./RegisterForm.module.css";
 import { useToast } from "@/components/ui/ToastContext";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function RegisterForm() {
+  const router = useRouter();
   const { showToast } = useToast();
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
@@ -37,6 +40,7 @@ export default function RegisterForm() {
       showToast("Success! User saved to database.", "success");
       setEmail(""); // Clear the form
       setPassword("");
+      router.push("/login"); // Redirect to login
     } else {
       showToast(`Failed: ${data.message}`, "error"); // E.g., "User already exists"
     }
@@ -126,14 +130,14 @@ export default function RegisterForm() {
           </div>
 
           <button type="submit" className="btn btn-primary w-100 mb-3 btn-login">
-            Login
+            Register
           </button>
 
           <div className="text-center" style={{ fontSize: "0.85rem", color: "var(--color-mauve)" }}>
-            Don't have an account?{" "}
-            <a href="#" style={{ color: "var(--color-coral)" }} className="text-decoration-none fw-semibold border-bottom pb-1">
-              Sign up here
-            </a>
+            Already have an account?{" "}
+            <Link href="/login" style={{ color: "var(--color-coral)" }} className="text-decoration-none fw-semibold border-bottom pb-1">
+              Login here
+            </Link>
           </div>
         </form>
       </div>

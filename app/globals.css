@@ -60,8 +60,8 @@ body.register {
   color: white;
 }
 
-.login .form-label,
-.register .form-label {
+.login label,
+.register label {
   color: var(--color-light) !important;
 }
 
