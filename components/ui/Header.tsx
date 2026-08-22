@@ -11,10 +11,10 @@ export default function Header() {
   const [userInitials, setUserInitials] = useState("GU");
   const [showDropdown, setShowDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [commitMsg, setCommitMsg] = useState("Checking for updates...");
 
-  // Vercel deployment info
-  const isVercelProd = process.env.NEXT_PUBLIC_VERCEL_ENV === "production" || process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
-  const commitMsg = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_MESSAGE || "New updates have been deployed! Check out the latest features and improvements.";
+  // Check if we are in production
+  const isVercelProd = process.env.NODE_ENV === "production";
 
   useEffect(() => {
     // Mobile Check
@@ -49,6 +49,17 @@ export default function Header() {
         }
       }
     });
+
+    if (isVercelProd) {
+      fetch("/api/updates")
+        .then(res => res.json())
+        .then(data => {
+          if (data.commitMessage) {
+            setCommitMsg(data.commitMessage);
+          }
+        })
+        .catch(err => console.error("Failed to fetch updates:", err));
+    }
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
