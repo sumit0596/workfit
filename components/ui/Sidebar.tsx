@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getSession, signOut } from "next-auth/react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import styles from "./Sidebar.module.css";
@@ -31,6 +31,17 @@ export default function Sidebar() {
   const [userName, setUserName] = useState("Loading...");
   const [userInitials, setUserInitials] = useState("--");
   const [showDropdown, setShowDropdown] = useState(false);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     getSession().then((session) => {
@@ -108,7 +119,7 @@ export default function Sidebar() {
             </div>
             <div className={styles.profileStatus}>Active Member</div>
           </div>
-          <div className={styles.settingsContainer}>
+          <div className={styles.settingsContainer} ref={profileDropdownRef}>
             <button
               className={styles.settingsBtn}
               onClick={() => setShowDropdown(!showDropdown)}

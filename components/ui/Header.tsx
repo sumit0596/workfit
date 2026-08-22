@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getSession, signOut } from "next-auth/react";
 import styles from "./Header.module.css";
 
@@ -12,6 +12,22 @@ export default function Header() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [commitMsg, setCommitMsg] = useState("Checking for updates...");
+
+  const notificationRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     // Mobile Check
@@ -80,7 +96,7 @@ export default function Header() {
         )}
       </div>
       <div className={isMobile ? `${styles.actionsContainer} ${styles.actionsContainerMobile}` : styles.actionsContainer}>
-        <div className={styles.notificationWrapper}>
+        <div className={styles.notificationWrapper} ref={notificationRef}>
           <button 
             className={isMobile ? `${styles.notificationBtn} ${styles.notificationBtnMobile}` : styles.notificationBtn}
             onClick={() => {
@@ -105,7 +121,7 @@ export default function Header() {
             </div>
           )}
         </div>
-        <div className={styles.profileWrapper}>
+        <div className={styles.profileWrapper} ref={profileRef}>
           <div 
             onClick={() => {
               if (isMobile) {
