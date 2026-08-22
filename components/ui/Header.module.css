@@ -181,6 +181,11 @@
   background: #F9FAFB;
 }
 
+.notificationList {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
 .notificationItem {
   padding: 16px;
   display: flex;

@@ -11,7 +11,7 @@ export default function Header() {
   const [userInitials, setUserInitials] = useState("GU");
   const [showDropdown, setShowDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [commitMsg, setCommitMsg] = useState("Checking for updates...");
+  const [updates, setUpdates] = useState<any[]>([]);
 
   const notificationRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -66,8 +66,8 @@ export default function Header() {
     fetch("/api/updates")
       .then(res => res.json())
       .then(data => {
-        if (data.commitMessage) {
-          setCommitMsg(data.commitMessage);
+        if (data.updates) {
+          setUpdates(data.updates);
         }
       })
       .catch(err => console.error("Failed to fetch updates:", err));
@@ -111,12 +111,24 @@ export default function Header() {
           {showNotifications && (
             <div className={styles.notificationDropdown}>
               <div className={styles.notificationHeader}>What's New</div>
-              <div className={styles.notificationItem}>
-                <div className={styles.notificationDot}></div>
-                <div>
-                  <p className={styles.notificationText}>{commitMsg}</p>
-                  <p className={styles.notificationTime}>Recently deployed</p>
-                </div>
+              <div className={styles.notificationList}>
+                {updates.length === 0 ? (
+                  <div className={styles.notificationItem}>
+                    <p className={styles.notificationText}>Checking for updates...</p>
+                  </div>
+                ) : (
+                  updates.map((update, idx) => (
+                    <div key={idx} className={styles.notificationItem}>
+                      <div className={styles.notificationDot}></div>
+                      <div>
+                        <p className={styles.notificationText}>{update.message}</p>
+                        <p className={styles.notificationTime}>
+                          {new Date(update.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           )}
