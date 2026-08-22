@@ -35,7 +35,9 @@ html {
 
 
 body.login,
-body.register {
+body.register,
+body.forgot-password,
+body.reset-password {
   background-color: var(--color-plum);
   font-family: 'Inter', sans-serif;
   color: var(--color-light);
@@ -61,7 +63,9 @@ body.register {
 }
 
 .login label,
-.register label {
+.register label,
+.forgot-password label,
+.reset-password label {
   color: var(--color-light) !important;
 }
 

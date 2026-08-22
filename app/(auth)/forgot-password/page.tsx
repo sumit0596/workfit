@@ -26,7 +26,7 @@ export default function ForgotPasswordForm() {
       const data = await response.json();
 
       if (response.ok) {
-        showToast("If the email exists, a reset link was sent.", "success");
+        showToast("Reset link was sent on mail.", "success");
         setSubmitted(true);
       } else {
         showToast(data.message || "An error occurred", "error");
