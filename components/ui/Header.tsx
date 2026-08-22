@@ -13,9 +13,6 @@ export default function Header() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [commitMsg, setCommitMsg] = useState("Checking for updates...");
 
-  // Check if we are in production
-  const isVercelProd = process.env.NODE_ENV === "production";
-
   useEffect(() => {
     // Mobile Check
     setIsMobile(window.innerWidth < 768);
@@ -50,16 +47,14 @@ export default function Header() {
       }
     });
 
-    if (isVercelProd) {
-      fetch("/api/updates")
-        .then(res => res.json())
-        .then(data => {
-          if (data.commitMessage) {
-            setCommitMsg(data.commitMessage);
-          }
-        })
-        .catch(err => console.error("Failed to fetch updates:", err));
-    }
+    fetch("/api/updates")
+      .then(res => res.json())
+      .then(data => {
+        if (data.commitMessage) {
+          setCommitMsg(data.commitMessage);
+        }
+      })
+      .catch(err => console.error("Failed to fetch updates:", err));
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -85,33 +80,31 @@ export default function Header() {
         )}
       </div>
       <div className={isMobile ? `${styles.actionsContainer} ${styles.actionsContainerMobile}` : styles.actionsContainer}>
-        {isVercelProd && (
-          <div className={styles.notificationWrapper}>
-            <button 
-              className={isMobile ? `${styles.notificationBtn} ${styles.notificationBtnMobile}` : styles.notificationBtn}
-              onClick={() => {
-                setShowNotifications(!showNotifications);
-                if (showDropdown) setShowDropdown(false);
-              }}
-            >
-              🔔
-              <span className={styles.notificationBadge}></span>
-            </button>
-            
-            {showNotifications && (
-              <div className={styles.notificationDropdown}>
-                <div className={styles.notificationHeader}>What's New</div>
-                <div className={styles.notificationItem}>
-                  <div className={styles.notificationDot}></div>
-                  <div>
-                    <p className={styles.notificationText}>{commitMsg}</p>
-                    <p className={styles.notificationTime}>Recently deployed</p>
-                  </div>
+        <div className={styles.notificationWrapper}>
+          <button 
+            className={isMobile ? `${styles.notificationBtn} ${styles.notificationBtnMobile}` : styles.notificationBtn}
+            onClick={() => {
+              setShowNotifications(!showNotifications);
+              if (showDropdown) setShowDropdown(false);
+            }}
+          >
+            🔔
+            <span className={styles.notificationBadge}></span>
+          </button>
+          
+          {showNotifications && (
+            <div className={styles.notificationDropdown}>
+              <div className={styles.notificationHeader}>What's New</div>
+              <div className={styles.notificationItem}>
+                <div className={styles.notificationDot}></div>
+                <div>
+                  <p className={styles.notificationText}>{commitMsg}</p>
+                  <p className={styles.notificationTime}>Recently deployed</p>
                 </div>
               </div>
-            )}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
         <div className={styles.profileWrapper}>
           <div 
             onClick={() => {
