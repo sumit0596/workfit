@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./globals.css";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -22,6 +22,13 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ActiveX Gym", 
   description: "Track your fitness journey",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default async function RootLayout({
