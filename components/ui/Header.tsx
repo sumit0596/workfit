@@ -117,6 +117,12 @@ export default function Header() {
           {isMobile && showDropdown && (
             <div className={styles.dropdownMenu}>
               <button
+                onClick={() => console.log('Navigate to profile')}
+                className={styles.menuBtn}
+              >
+                Profile
+              </button>
+              <button
                 onClick={() => signOut({ callbackUrl: '/login' })}
                 className={styles.logoutBtn}
               >

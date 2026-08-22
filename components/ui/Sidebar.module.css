@@ -185,6 +185,23 @@
   z-index: 50;
 }
 
+.menuBtn {
+  width: 100%;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  color: #4B5563;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.menuBtn:hover {
+  background: #f8f9fa;
+}
+
 .logoutBtn {
   width: 100%;
   padding: 8px 16px;
