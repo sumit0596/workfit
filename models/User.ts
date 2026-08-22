@@ -25,6 +25,14 @@ const UserSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  resetPasswordToken: {
+    type: String,
+    required: false,
+  },
+  resetPasswordExpires: {
+    type: Date,
+    required: false,
+  }
 });
 
 // In Next.js, we must check if the model is already compiled to avoid overwriting errors during hot reloads
