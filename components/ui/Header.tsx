@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { getSession, signOut } from "next-auth/react";
+import styles from "./Header.module.css";
 
 export default function Header() {
   const [isMobile, setIsMobile] = useState(false);
@@ -56,85 +57,34 @@ export default function Header() {
   });
 
   return (
-    <div 
-      style={{ 
-        display: "flex", 
-        alignItems: "center", 
-        justifyContent: "space-between", 
-        padding: isMobile ? "16px 20px" : "32px 32px 16px",
-        background: isMobile ? "rgba(255, 255, 255, 0.9)" : "transparent",
-        backdropFilter: isMobile ? "blur(10px)" : "none",
-        position: isMobile ? "sticky" : "static",
-        top: 0,
-        zIndex: 30,
-        borderBottom: isMobile ? "1px solid #D9DDE3" : "none",
-        boxShadow: isMobile ? "0 2px 10px rgba(0,0,0,0.05)" : "none",
-      }}
-    >
+    <div className={isMobile ? `${styles.headerContainer} ${styles.mobileHeader}` : styles.headerContainer}>
       <div>
-        <h1 style={{ fontSize: isMobile ? 22 : 28, fontWeight: 700, color: "#2A2D34", margin: 0, display: "flex", alignItems: "center", gap: 8 }}>
+        <h1 className={isMobile ? `${styles.greetingTitle} ${styles.greetingTitleMobile}` : styles.greetingTitle}>
           {greeting} {greetingEmoji}
         </h1>
         {!isMobile && (
-          <p style={{ color: "#6B7280", marginTop: 4, fontSize: 15 }}>
+          <p className={styles.subtitle}>
             Ready for today's workout? — {formattedDate}
           </p>
         )}
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 12 : 16 }}>
-        <button style={{ background: "#fff", border: "1.5px solid #D9DDE3", borderRadius: 8, width: isMobile ? 36 : 40, height: isMobile ? 36 : 40, cursor: "pointer", fontSize: isMobile ? 14 : 16, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div className={isMobile ? `${styles.actionsContainer} ${styles.actionsContainerMobile}` : styles.actionsContainer}>
+        <button className={isMobile ? `${styles.notificationBtn} ${styles.notificationBtnMobile}` : styles.notificationBtn}>
           🔔
         </button>
-        <div style={{ position: "relative" }}>
+        <div className={styles.profileWrapper}>
           <div 
             onClick={() => isMobile && setShowDropdown(!showDropdown)}
-            style={{ 
-              width: isMobile ? 36 : 40, 
-              height: isMobile ? 36 : 40, 
-              borderRadius: "50%", 
-              background: "linear-gradient(135deg, var(--color-plum), var(--color-mauve))", 
-              display: "flex", 
-              alignItems: "center", 
-              justifyContent: "center", 
-              color: "var(--color-yellow)", 
-              fontWeight: 700, 
-              fontSize: isMobile ? 13 : 15,
-              cursor: isMobile ? "pointer" : "default"
-            }}
+            className={isMobile ? `${styles.profileIcon} ${styles.profileIconMobile}` : styles.profileIcon}
           >
             {userInitials}
           </div>
           
           {isMobile && showDropdown && (
-            <div
-              style={{
-                position: "absolute",
-                top: "100%",
-                right: 0,
-                marginTop: 8,
-                background: "#fff",
-                borderRadius: 8,
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-                padding: "4px 0",
-                minWidth: 120,
-                zIndex: 50,
-                border: "1px solid #D9DDE3"
-              }}
-            >
+            <div className={styles.dropdownMenu}>
               <button
                 onClick={() => signOut({ callbackUrl: '/login' })}
-                style={{
-                  width: "100%",
-                  padding: "10px 16px",
-                  background: "transparent",
-                  border: "none",
-                  textAlign: "left",
-                  color: "#dc3545",
-                  fontSize: 14,
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  transition: "background 0.2s"
-                }}
+                className={styles.logoutBtn}
               >
                 Logout
               </button>

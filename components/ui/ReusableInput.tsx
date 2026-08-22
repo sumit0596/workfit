@@ -2,7 +2,7 @@
 
 import { useState, ChangeEvent } from "react";
 import Form from "react-bootstrap/Form";
-import styles from "../ui/ReusableInput.module.css";
+import styles from "./ReusableInput.module.css";
 
 type InputType = "text" | "number" | "email" | "date" | "password" | "select" | "counter";
 
@@ -37,24 +37,6 @@ export default function ReusableInput({
   // New state to toggle password visibility
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  const labelStyles = {
-    fontWeight: 600,
-    color: "#333",
-    letterSpacing: "0.5px",
-    textTransform: "uppercase" as const,
-    fontSize: 12,
-    marginBottom: 8,
-    display: "block",
-  };
-
-  const inputStyles = {
-    padding: ".8rem",
-    borderRadius: "8px",
-    border: "1px solid #D9DDE3",
-    // Add extra padding on the right if it's a password field so text doesn't hide behind the icon
-    paddingRight: type === "password" ? "45px" : ".8rem",
-    fontSize: 15,
-  };
 
   const validate = (val: string | number): string => {
     const stringVal = String(val);
@@ -103,7 +85,7 @@ export default function ReusableInput({
   if (type === "select") {
     return (
       <div className="mb-3">
-        <label style={labelStyles}>
+        <label className={styles.label}>
           {label} {required && <span className="text-danger">*</span>}
         </label>
         <select
@@ -111,7 +93,7 @@ export default function ReusableInput({
           value={value}
           onChange={handleChange}
           onBlur={handleBlur}
-          style={{ ...inputStyles, width: "100%", outline: "none", background: "#fff", color: "#2A2D34" }}
+          className={`${styles.input} ${error ? styles.inputError : ""}`}
         >
           {placeholder && <option value="">{placeholder}</option>}
           {options.map((opt) => (
@@ -119,7 +101,7 @@ export default function ReusableInput({
           ))}
         </select>
         {error && (
-          <div style={{ fontSize: "0.85rem", marginTop: "4px", color: "#dc3545" }}>
+          <div className={styles.errorText}>
             {error}
           </div>
         )}
@@ -130,16 +112,16 @@ export default function ReusableInput({
   if (type === "counter") {
     return (
       <div className="mb-3">
-        <label style={labelStyles}>
+        <label className={styles.label}>
           {label} {required && <span className="text-danger">*</span>}
         </label>
-        <div style={{ display: "flex", border: "1px solid #D9DDE3", borderRadius: 8, overflow: "hidden" }}>
-          <button type="button" onClick={onDecrement} style={{ padding: "12px 16px", background: "#F9FAFB", border: "none", borderRight: "1px solid #D9DDE3", color: "#6B7280", cursor: "pointer", fontWeight: 600 }}>-</button>
-          <input type="text" value={value} readOnly style={{ width: "100%", textAlign: "center", border: "none", fontSize: 15, fontWeight: 600, color: "#2A2D34", outline: "none", background: "#fff" }} />
-          <button type="button" onClick={onIncrement} style={{ padding: "12px 16px", background: "#F9FAFB", border: "none", borderLeft: "1px solid #D9DDE3", color: "#6B7280", cursor: "pointer", fontWeight: 600 }}>+</button>
+        <div className={styles.counterWrapper}>
+          <button type="button" onClick={onDecrement} className={`${styles.counterBtn} ${styles.decrementBtn}`}>-</button>
+          <input type="text" value={value} readOnly className={styles.counterValue} />
+          <button type="button" onClick={onIncrement} className={`${styles.counterBtn} ${styles.incrementBtn}`}>+</button>
         </div>
         {error && (
-          <div style={{ fontSize: "0.85rem", marginTop: "4px", color: "#dc3545" }}>
+          <div className={styles.errorText}>
             {error}
           </div>
         )}
@@ -152,12 +134,12 @@ export default function ReusableInput({
 
   return (
     <div className="mb-3">
-      <label className="form-label" style={labelStyles}>
+      <label className={styles.label}>
         {label} {required && <span className="text-danger">*</span>}
       </label>
 
       {/* Relative wrapper for absolute icon positioning */}
-      <div style={{ position: "relative" }}>
+      <div className={styles.passwordWrapper}>
         <input
           type={currentInputType}
           name={name}
@@ -165,24 +147,14 @@ export default function ReusableInput({
           value={value}
           onChange={handleChange}
           onBlur={handleBlur}
-          style={{ ...inputStyles, width: "100%", outline: "none", background: "#fff", color: "#2A2D34", borderColor: error ? "#dc3545" : "#D9DDE3" }}
+          className={`${styles.input} ${type === "password" ? styles.passwordInput : ""} ${error ? styles.inputError : ""}`}
         />
 
         {/* Render the eye icon only for password types */}
         {type === "password" && (
           <div
             onClick={() => setShowPassword(!showPassword)}
-            style={{
-              position: "absolute",
-              right: "15px",
-              top: "50%",
-              transform: "translateY(-50%)",
-              cursor: "pointer",
-              color: "#6c757d",
-              display: "flex",
-              alignItems: "center",
-              zIndex: 10, // Ensures it sits above the input
-            }}
+            className={styles.passwordToggle}
             title={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? (
@@ -203,7 +175,7 @@ export default function ReusableInput({
       </div>
 
       {error && (
-        <div style={{ fontSize: "0.85rem", marginTop: "4px", color: "#dc3545" }}>
+        <div className={styles.errorText}>
           {error}
         </div>
       )}

@@ -1,0 +1,20 @@
+.layoutContainer {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+}
+
+.mainContent {
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.mainContentDesktop {
+  margin-left: 240px;
+}
+
+.mainContentMobile {
+  padding-bottom: 80px;
+}

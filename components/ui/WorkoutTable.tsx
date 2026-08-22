@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import styles from "./WorkoutTable.module.css";
 
 export type WorkoutRow = {
   id: string;
@@ -47,59 +48,54 @@ const getStatusStyle = (status: string) => {
 
 export default function WorkoutTable({ data }: WorkoutTableProps) {
   return (
-    <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #D9DDE3", overflow: "hidden" }}>
-      <div style={{ overflowX: "auto" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: 13 }}>
-          <thead style={{ background: "#fff", borderBottom: "2px solid #F3F4F6" }}>
+    <div className={styles.tableContainer}>
+      <div className={styles.tableScroll}>
+        <table className={styles.table}>
+          <thead className={styles.tableHead}>
             <tr>
-              <th style={{ padding: "16px 24px", color: "#6B7280", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.05em" }}>Date</th>
-              <th style={{ padding: "16px 24px", color: "#6B7280", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.05em" }}>Exercise</th>
-              <th style={{ padding: "16px 24px", color: "#6B7280", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.05em" }}>Category</th>
-              <th style={{ padding: "16px 24px", color: "#6B7280", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.05em" }}>Set</th>
-              <th style={{ padding: "16px 24px", color: "#6B7280", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.05em" }}>Resistance</th>
-              <th style={{ padding: "16px 24px", color: "#6B7280", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.05em" }}>Stance</th>
-              <th style={{ padding: "16px 24px", color: "#6B7280", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.05em" }}>Reps</th>
-              <th style={{ padding: "16px 24px", color: "#6B7280", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.05em" }}>Target</th>
-              <th style={{ padding: "16px 24px", color: "#6B7280", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.05em" }}>RPE</th>
-              <th style={{ padding: "16px 24px", color: "#6B7280", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.05em" }}>Status</th>
-              <th style={{ padding: "16px 24px", color: "#6B7280", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.05em" }}>Notes</th>
+              <th className={styles.tableHeaderCell}>Date</th>
+              <th className={styles.tableHeaderCell}>Exercise</th>
+              <th className={styles.tableHeaderCell}>Category</th>
+              <th className={styles.tableHeaderCell}>Set</th>
+              <th className={styles.tableHeaderCell}>Resistance</th>
+              <th className={styles.tableHeaderCell}>Stance</th>
+              <th className={styles.tableHeaderCell}>Reps</th>
+              <th className={styles.tableHeaderCell}>Target</th>
+              <th className={styles.tableHeaderCell}>RPE</th>
+              <th className={styles.tableHeaderCell}>Status</th>
+              <th className={styles.tableHeaderCell}>Notes</th>
             </tr>
           </thead>
           <tbody>
             {data.map((row, idx) => (
-              <tr 
-                key={row.id} 
-                style={{ borderBottom: idx === data.length - 1 ? "none" : "1px solid #F3F4F6", transition: "background 0.2s" }} 
-                onMouseEnter={e => e.currentTarget.style.background = "#F9FAFB"} 
-                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-              >
-                <td style={{ padding: "16px 24px", color: "#6B7280" }}>{row.date}</td>
-                <td style={{ padding: "16px 24px", fontWeight: 600, color: "var(--color-plum)" }}>{row.exercise}</td>
-                <td style={{ padding: "16px 24px" }}>
-                  <span style={{ padding: "4px 10px", borderRadius: 20, fontSize: 11, fontWeight: 700, ...getCategoryStyle(row.category) }}>
+              <tr key={row.id} className={styles.tableRow}>
+                <td className={`${styles.tableCell} ${styles.cellTextMuted}`}>{row.date}</td>
+                <td className={`${styles.tableCell} ${styles.cellTextPlum}`}>{row.exercise}</td>
+                <td className={styles.tableCell}>
+                  <span className={styles.categoryPill} style={getCategoryStyle(row.category)}>
                     {row.category}
                   </span>
                 </td>
-                <td style={{ padding: "16px 24px", fontWeight: 700, color: "#111827" }}>{row.set}</td>
-                <td style={{ padding: "16px 24px" }}>
+                <td className={`${styles.tableCell} ${styles.cellTextDark}`}>{row.set}</td>
+                <td className={styles.tableCell}>
                   {row.resistance !== "-" ? (
-                    <span style={{ padding: "4px 10px", borderRadius: 6, fontSize: 11, fontWeight: 700, ...getResistanceStyle(row.resistance) }}>
+                    <span className={styles.resistancePill} style={getResistanceStyle(row.resistance)}>
                       {row.resistance}
                     </span>
-                  ) : <span style={{ color: "#D1D5DB" }}>—</span>}
+                  ) : <span className={styles.cellTextGray}>—</span>}
                 </td>
-                <td style={{ padding: "16px 24px", color: "#6B7280" }}>{row.stance}</td>
-                <td style={{ padding: "16px 24px", fontWeight: 700, color: "#111827" }}>{row.reps}</td>
-                <td style={{ padding: "16px 24px", color: "#9CA3AF" }}>{row.target}</td>
-                <td style={{ padding: "16px 24px", fontWeight: 600, color: "#4B5563" }}>{row.rpe}<span style={{ color: "#9CA3AF", fontWeight: 400 }}>/10</span></td>
-                <td style={{ padding: "16px 24px" }}>
-                  <span style={{ padding: "4px 10px", borderRadius: 20, fontSize: 11, fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 4, ...getStatusStyle(row.status) }}>
-                    <span style={{ width: 4, height: 4, borderRadius: "50%", background: "currentColor" }}></span>
+                <td className={`${styles.tableCell} ${styles.cellTextMuted}`}>{row.stance}</td>
+                <td className={`${styles.tableCell} ${styles.cellTextDark}`}>{row.reps}</td>
+                <td className={`${styles.tableCell} ${styles.cellTextGray}`}>{row.target}</td>
+                <td className={`${styles.tableCell} ${styles.cellTextDarkMedium}`}>{row.rpe}<span style={{ color: "#9CA3AF", fontWeight: 400 }}>/10</span></td>
+                <td className={styles.tableCell}>
+                  <span className={styles.statusPill} style={getStatusStyle(row.status)}>
+                    <span className={styles.statusDot}></span>
                     {row.status}
                   </span>
                 </td>
-                <td style={{ padding: "16px 24px", color: "#6B7280", maxWidth: 200, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                  {row.notes || <span style={{ color: "#D1D5DB" }}>—</span>}
+                <td className={`${styles.tableCell} ${styles.cellNotes}`}>
+                  {row.notes || <span className={styles.cellTextGray}>—</span>}
                 </td>
               </tr>
             ))}

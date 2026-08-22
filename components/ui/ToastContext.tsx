@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback } from "react";
+import styles from "./ToastContext.module.css";
 
 export type ToastType = "success" | "error" | "warn" | "info";
 
@@ -31,7 +32,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="toast-container position-fixed top-0 end-0 p-3" style={{ zIndex: 1100, marginTop: "60px" }}>
+      <div className={`toast-container position-fixed top-0 end-0 p-3 ${styles.toastContainerWrapper}`}>
         {toasts.map((toast) => {
           let bgClass = "text-bg-primary";
           if (toast.type === "success") bgClass = "text-bg-success";
@@ -42,14 +43,13 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           return (
             <div
               key={toast.id}
-              className={`toast show align-items-center border-0 ${bgClass} mb-2`}
+              className={`toast show align-items-center border-0 ${bgClass} mb-2 ${styles.toastWrapper}`}
               role="alert"
               aria-live="assertive"
               aria-atomic="true"
-              style={{ minWidth: "250px" }}
             >
               <div className="d-flex">
-                <div className="toast-body flex-grow-1 fw-medium" style={{ fontSize: "15px" }}>
+                <div className={`toast-body flex-grow-1 fw-medium ${styles.toastText}`}>
                   {toast.message}
                 </div>
                 <button

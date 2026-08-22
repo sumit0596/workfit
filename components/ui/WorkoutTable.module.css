@@ -1,0 +1,110 @@
+.tableContainer {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #D9DDE3;
+  overflow: hidden;
+}
+
+.tableScroll {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.tableHead {
+  background: #fff;
+  border-bottom: 2px solid #F3F4F6;
+}
+
+.tableHeaderCell {
+  padding: 16px 24px;
+  color: #6B7280;
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tableRow {
+  border-bottom: 1px solid #F3F4F6;
+  transition: background 0.2s;
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+.tableRow:hover {
+  background: #F9FAFB;
+}
+
+.tableCell {
+  padding: 16px 24px;
+}
+
+.cellTextMuted {
+  color: #6B7280;
+}
+
+.cellTextPlum {
+  font-weight: 600;
+  color: var(--color-plum);
+}
+
+.cellTextDark {
+  font-weight: 700;
+  color: #111827;
+}
+
+.cellTextGray {
+  color: #9CA3AF;
+}
+
+.cellTextDarkMedium {
+  font-weight: 600;
+  color: #4B5563;
+}
+
+.cellNotes {
+  color: #6B7280;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.categoryPill {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.resistancePill {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.statusPill {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.statusDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}

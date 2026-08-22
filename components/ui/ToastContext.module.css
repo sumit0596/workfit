@@ -1,0 +1,12 @@
+.toastContainerWrapper {
+  z-index: 1100;
+  margin-top: 60px;
+}
+
+.toastWrapper {
+  min-width: 250px;
+}
+
+.toastText {
+  font-size: 15px;
+}

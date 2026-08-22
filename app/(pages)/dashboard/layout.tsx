@@ -4,6 +4,7 @@ import Sidebar from "@/components/ui/Sidebar";
 import BottomNav from "@/components/ui/BottomNav";
 import Header from "@/components/ui/Header";
 import { useState, useEffect } from "react";
+import styles from "./layout.module.css";
 
 export default function DashboardLayout({
   children,
@@ -28,21 +29,14 @@ export default function DashboardLayout({
   const showSidebar = !isMobile;
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "#f3f4f6" }}>
+    <div className={styles.layoutContainer}>
       
       {/* Left Section: Sidebar stays constant across all dashboard pages */}
       {showSidebar && <Sidebar />}
 
       {/* Right Section: Page content changes dynamically */}
       <main
-        style={{
-          flex: 1,
-          marginLeft: showSidebar ? "240px" : "0", 
-          minHeight: "100vh",
-          display: "flex",
-          flexDirection: "column",
-          paddingBottom: isMobile ? "80px" : "0",
-        }}
+        className={`${styles.mainContent} ${showSidebar ? styles.mainContentDesktop : ""} ${isMobile ? styles.mainContentMobile : ""}`}
       >
         <Header />
         {children}
