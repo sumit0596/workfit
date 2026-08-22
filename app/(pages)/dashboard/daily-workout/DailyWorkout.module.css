@@ -123,6 +123,26 @@
 .searchInput:focus {
   border-color: var(--color-plum);
 }
+.clearSearchBtn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9CA3AF;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+.clearSearchBtn:hover {
+  background: #F3F4F6;
+  color: #4B5563;
+}
 .filterBtnGroup {
   display: flex;
   gap: 8px;

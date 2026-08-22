@@ -47,6 +47,21 @@ const getStatusStyle = (status: string) => {
 };
 
 export default function WorkoutTable({ data }: WorkoutTableProps) {
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const rowsPerPage = 10;
+  
+  // Reset to first page if data changes (e.g. on filter change)
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [data]);
+
+  const totalPages = Math.max(1, Math.ceil(data.length / rowsPerPage));
+  
+  const paginatedData = data.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+
   return (
     <div className={styles.tableContainer}>
       <div className={styles.tableScroll}>
@@ -67,7 +82,7 @@ export default function WorkoutTable({ data }: WorkoutTableProps) {
             </tr>
           </thead>
           <tbody>
-            {data.map((row, idx) => (
+            {paginatedData.map((row, idx) => (
               <tr key={row.id} className={styles.tableRow}>
                 <td className={`${styles.tableCell} ${styles.cellTextMuted}`}>{row.date}</td>
                 <td className={`${styles.tableCell} ${styles.cellTextPlum}`}>{row.exercise}</td>
@@ -102,6 +117,41 @@ export default function WorkoutTable({ data }: WorkoutTableProps) {
           </tbody>
         </table>
       </div>
+      
+      {data.length > 0 && (
+        <div className={styles.paginationContainer}>
+          <div className={styles.paginationText}>
+            Showing {Math.min((currentPage - 1) * rowsPerPage + 1, data.length)} to {Math.min(currentPage * rowsPerPage, data.length)} of {data.length} entries
+          </div>
+          <div className={styles.paginationControls}>
+            <button 
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className={styles.paginationBtn}
+            >
+              Previous
+            </button>
+            <div className={styles.pageNumbers}>
+              {Array.from({length: totalPages}, (_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`${styles.pageNumberBtn} ${currentPage === i + 1 ? styles.activePageBtn : ""}`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+            </div>
+            <button 
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className={styles.paginationBtn}
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

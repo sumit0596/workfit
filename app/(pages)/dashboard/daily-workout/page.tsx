@@ -3,13 +3,14 @@
 import React, { useState, useEffect } from "react";
 import WorkoutTable, { WorkoutRow } from "@/components/ui/WorkoutTable";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Search01Icon, Tick01Icon } from "@hugeicons/core-free-icons";
+import { Search01Icon, Tick01Icon, Cancel01Icon } from "@hugeicons/core-free-icons";
 import styles from "./DailyWorkout.module.css";
 
 // Removed static mockData in favor of API
 
 export default function DailyWorkoutPage() {
   const [activeFilter, setActiveFilter] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -39,7 +40,11 @@ export default function DailyWorkoutPage() {
     fetchWorkouts();
   }, []);
 
-  const filteredData = workoutData.filter(row => activeFilter === "All" || row.category === activeFilter);
+  const filteredData = workoutData.filter(row => {
+    const matchesCategory = activeFilter === "All" || row.category === activeFilter;
+    const matchesSearch = row.exercise.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <div className={isMobile ? `${styles.pageContainer} ${styles.pageContainerMobile}` : styles.pageContainer}>
@@ -74,7 +79,18 @@ export default function DailyWorkoutPage() {
               type="text"
               placeholder="Search exercises..."
               className={styles.searchInput}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
+            {searchQuery && (
+              <button 
+                className={styles.clearSearchBtn}
+                onClick={() => setSearchQuery("")}
+                aria-label="Clear search"
+              >
+                <HugeiconsIcon icon={Cancel01Icon} size={16} color="currentColor" />
+              </button>
+            )}
           </div>
 
           <div className={styles.filterBtnGroup}>
@@ -96,6 +112,11 @@ export default function DailyWorkoutPage() {
             <div className={styles.loadingText}>Loading workouts...</div>
           ) : workoutData.length === 0 ? (
             <div className={styles.emptyStateText}>No workouts logged yet. Go to the dashboard to log a set!</div>
+          ) : filteredData.length === 0 ? (
+            <div className={styles.emptyStateText}>
+              No exercises found matching &quot;{searchQuery}&quot;. 
+              <br />Try a different search or clear the filter.
+            </div>
           ) : (
             <WorkoutTable data={filteredData} />
           )}
