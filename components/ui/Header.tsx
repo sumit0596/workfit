@@ -10,6 +10,11 @@ export default function Header() {
   const [greetingEmoji, setGreetingEmoji] = useState("🌅");
   const [userInitials, setUserInitials] = useState("GU");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  // Vercel deployment info
+  const isVercelProd = process.env.NEXT_PUBLIC_VERCEL_ENV === "production" || process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
+  const commitMsg = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_MESSAGE || "New updates have been deployed! Check out the latest features and improvements.";
 
   useEffect(() => {
     // Mobile Check
@@ -69,12 +74,41 @@ export default function Header() {
         )}
       </div>
       <div className={isMobile ? `${styles.actionsContainer} ${styles.actionsContainerMobile}` : styles.actionsContainer}>
-        <button className={isMobile ? `${styles.notificationBtn} ${styles.notificationBtnMobile}` : styles.notificationBtn}>
-          🔔
-        </button>
+        {isVercelProd && (
+          <div className={styles.notificationWrapper}>
+            <button 
+              className={isMobile ? `${styles.notificationBtn} ${styles.notificationBtnMobile}` : styles.notificationBtn}
+              onClick={() => {
+                setShowNotifications(!showNotifications);
+                if (showDropdown) setShowDropdown(false);
+              }}
+            >
+              🔔
+              <span className={styles.notificationBadge}></span>
+            </button>
+            
+            {showNotifications && (
+              <div className={styles.notificationDropdown}>
+                <div className={styles.notificationHeader}>What's New</div>
+                <div className={styles.notificationItem}>
+                  <div className={styles.notificationDot}></div>
+                  <div>
+                    <p className={styles.notificationText}>{commitMsg}</p>
+                    <p className={styles.notificationTime}>Recently deployed</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         <div className={styles.profileWrapper}>
           <div 
-            onClick={() => isMobile && setShowDropdown(!showDropdown)}
+            onClick={() => {
+              if (isMobile) {
+                setShowDropdown(!showDropdown);
+                if (showNotifications) setShowNotifications(false);
+              }
+            }}
             className={isMobile ? `${styles.profileIcon} ${styles.profileIconMobile}` : styles.profileIcon}
           >
             {userInitials}
