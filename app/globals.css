@@ -29,6 +29,10 @@
   --color-yellow: #f5eb91;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 
 body.login,
 body.register {
@@ -59,4 +63,12 @@ body.register {
 .login .form-label,
 .register .form-label {
   color: var(--color-light) !important;
+}
+
+.dashboard-daily-workout table th:nth-child(1) {
+  padding: 16px 30px !important;
+}
+
+.dashboard-daily-workout table th:nth-child(3) {
+  padding: 16px 45px !important;
 }

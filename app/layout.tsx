@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { headers } from "next/headers";
 import Loader from "@/components/loader/loader";
 import RouteManager from "@/components/ui/RouteManager";
+import { ToastProvider } from "@/components/ui/ToastContext";
 // 1. Import your new Loader component
 
 
@@ -42,9 +43,11 @@ export default async function RootLayout({
       <body className={`min-h-full flex flex-col`}>
         {/* 2. Wrap your children with the Loader context */}
         <RouteManager />
-        <Loader>
-          {children}
-        </Loader>
+        <ToastProvider>
+          <Loader>
+            {children}
+          </Loader>
+        </ToastProvider>
       </body>
     </html>
   );

@@ -47,10 +47,10 @@ const getStatusStyle = (status: string) => {
 
 export default function WorkoutTable({ data }: WorkoutTableProps) {
   return (
-    <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #D9DDE3", overflow: "hidden", display: "flex", flexDirection: "column", height: "100%" }}>
-      <div style={{ overflow: "auto", flex: 1 }}>
+    <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #D9DDE3", overflow: "hidden" }}>
+      <div style={{ overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: 13 }}>
-          <thead style={{ position: "sticky", top: 0, background: "#fff", zIndex: 10, borderBottom: "2px solid #F3F4F6", boxShadow: "0 2px 4px rgba(0,0,0,0.02)" }}>
+          <thead style={{ background: "#fff", borderBottom: "2px solid #F3F4F6" }}>
             <tr>
               <th style={{ padding: "16px 24px", color: "#6B7280", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.05em" }}>Date</th>
               <th style={{ padding: "16px 24px", color: "#6B7280", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.05em" }}>Exercise</th>

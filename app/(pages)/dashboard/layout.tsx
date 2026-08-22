@@ -1,6 +1,8 @@
 "use client";
 
 import Sidebar from "@/components/ui/Sidebar";
+import BottomNav from "@/components/ui/BottomNav";
+import Header from "@/components/ui/Header";
 import { useState, useEffect } from "react";
 
 export default function DashboardLayout({
@@ -39,10 +41,14 @@ export default function DashboardLayout({
           minHeight: "100vh",
           display: "flex",
           flexDirection: "column",
+          paddingBottom: isMobile ? "80px" : "0",
         }}
       >
+        <Header />
         {children}
       </main>
+
+      {isMobile && <BottomNav />}
     </div>
   );
 }

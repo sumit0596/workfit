@@ -3,8 +3,10 @@
 import { useState, FormEvent, useEffect } from "react";
 import ReusableInput from "@/components/ui/ReusableInput";
 import styles from "./RegisterForm.module.css";
+import { useToast } from "@/components/ui/ToastContext";
 
 export default function RegisterForm() {
+  const { showToast } = useToast();
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
   const [email, setEmail] = useState("");
@@ -32,15 +34,15 @@ export default function RegisterForm() {
 
     // 3. Handle success or failure
     if (response.ok) {
-      alert("Success! User saved to database.");
+      showToast("Success! User saved to database.", "success");
       setEmail(""); // Clear the form
       setPassword("");
     } else {
-      alert(`Failed: ${data.message}`); // E.g., "User already exists"
+      showToast(`Failed: ${data.message}`, "error"); // E.g., "User already exists"
     }
   } catch (error) {
     console.error("Network error:", error);
-    alert("An error occurred while connecting to the server.");
+    showToast("An error occurred while connecting to the server.", "error");
   }
 };
 

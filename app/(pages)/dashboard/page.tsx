@@ -3,20 +3,148 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ReusableInput from "@/components/ui/ReusableInput";
+import { useToast } from "@/components/ui/ToastContext";
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { showToast } = useToast();
   const [isMobile, setIsMobile] = useState(false);
-  const [greeting, setGreeting] = useState("Good Morning");
-  const [greetingEmoji, setGreetingEmoji] = useState("👋");
+
   const [setNumber, setSetNumber] = useState(1);
   const [exercise, setExercise] = useState("");
   const [band, setBand] = useState("");
   const [stance, setStance] = useState("");
   const [reps, setReps] = useState("");
   const [rpe, setRpe] = useState<number | null>(null);
+  const [notes, setNotes] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [weeklySummary, setWeeklySummary] = useState({
+    days: [
+      { dayName: "Mon", isToday: false, performance: 0 },
+      { dayName: "Tue", isToday: false, performance: 0 },
+      { dayName: "Wed", isToday: false, performance: 0 },
+      { dayName: "Thu", isToday: false, performance: 0 },
+      { dayName: "Fri", isToday: false, performance: 0 },
+      { dayName: "Sat", isToday: false, performance: 0 },
+      { dayName: "Sun", isToday: false, performance: 0 },
+    ],
+    activeDaysThisWeek: 0
+  });
+
+  const fetchWeeklySummary = async () => {
+    try {
+      const res = await fetch("/api/workouts/weekly-summary");
+      if (res.ok) {
+        const data = await res.json();
+        setWeeklySummary(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch weekly summary", err);
+    }
+  };
+
+  const [kpiSummary, setKpiSummary] = useState({
+    currentStreak: 0,
+    workoutsThisMonth: 0,
+    totalSets: 0,
+    totalActiveDays: 0,
+  });
+
+  const fetchKpiSummary = async () => {
+    try {
+      const res = await fetch("/api/workouts/kpi");
+      if (res.ok) {
+        const data = await res.json();
+        setKpiSummary(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch KPI summary", err);
+    }
+  };
+
+  const [todaySummary, setTodaySummary] = useState({
+    category: "None",
+    uniqueExercises: 0,
+    estimatedTimeMin: 0,
+    totalSets: 0,
+    progressPercent: 0
+  });
+
+  const fetchTodaySummary = async () => {
+    try {
+      const res = await fetch("/api/workouts/today-summary");
+      if (res.ok) {
+        const data = await res.json();
+        setTodaySummary(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch today's summary", err);
+    }
+  };
+
+  const handleSaveSet = async () => {
+    if (!exercise || !setNumber || !reps || !rpe) {
+      showToast("Please fill in all required fields (Exercise, Set Number, Reps, RPE)", "warn");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Derive a simple category based on exercise selection
+      let category = "General";
+      const exerciseLower = exercise.toLowerCase();
+      if (["squat", "deadlift", "lunge"].includes(exerciseLower)) category = "Lower Body";
+      else if (["bench-press", "bench press", "chest press", "shoulder press", "bicep curl", "tricep extension", "lat pulldown"].includes(exerciseLower)) category = "Upper Body";
+      else if (["plank", "russian twists", "crunch"].includes(exerciseLower)) category = "Core";
+
+      const response = await fetch("/api/workouts/log", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          exercise: exercise.replace("-", " ").replace(/\b\w/g, l => l.toUpperCase()),
+          category,
+          setNumber,
+          band: band ? band.charAt(0).toUpperCase() + band.slice(1) : "-",
+          stance: stance ? stance.replace("-", " ").replace(/\b\w/g, l => l.toUpperCase()) : "-",
+          reps: Number(reps),
+          rpe,
+          notes,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to log set");
+      }
+
+      showToast("Set logged successfully!", "success");
+      setSetNumber(prev => prev + 1);
+      
+      // Update the summary dynamically
+      fetchTodaySummary();
+      fetchWeeklySummary();
+      fetchKpiSummary();
+      
+      // Auto-hide success message and navigate
+      setTimeout(() => {
+        router.push("/dashboard/daily-workout");
+      }, 1000);
+    } catch (err: any) {
+      showToast(err.message, "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
+    fetchTodaySummary();
+    fetchWeeklySummary();
+    fetchKpiSummary();
+
     // Check initial window size
     setIsMobile(window.innerWidth < 768);
 
@@ -24,61 +152,23 @@ export default function DashboardPage() {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
 
-    // Determine greeting based on time of day
-    const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) {
-      setGreeting("Good Morning");
-      setGreetingEmoji("🌅");
-    } else if (hour >= 12 && hour < 17) {
-      setGreeting("Good Afternoon");
-      setGreetingEmoji("☀️");
-    } else if (hour >= 17 && hour < 22) {
-      setGreeting("Good Evening");
-      setGreetingEmoji("🌇");
-    } else {
-      setGreeting("Good Night");
-      setGreetingEmoji("🌙");
-    }
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Dynamically format today's date
-  const today = new Date();
-  const formattedDate = today.toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+
 
   return (
     <div style={{ padding: isMobile ? "20px 16px 100px" : "32px 32px 40px" }}>
-      {/* Header */}
-      {!isMobile && (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 32 }}>
-          <div>
-            <h1 style={{ fontSize: 28, fontWeight: 700, color: "#2A2D34", margin: 0 }}>
-              {greeting} {greetingEmoji}
-            </h1>
-            <p style={{ color: "#6B7280", marginTop: 4, fontSize: 15 }}>
-              Ready for today&apos;s workout? — {formattedDate}
-            </p>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <button style={{ background: "#fff", border: "1.5px solid #D9DDE3", borderRadius: 8, width: 40, height: 40, cursor: "pointer", fontSize: 16 }}>🔔</button>
-            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg, var(--color-plum), var(--color-mauve))", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--color-yellow)", fontWeight: 700 }}>JD</div>
-          </div>
-        </div>
-      )}
+
 
       {/* KPI Cards */}
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)", gap: 16, marginBottom: 24 }}>
         {[
-          { label: "Current Streak", value: "7 Days", sub: "Keep it up!", accent: "#2E7D32", bg: "#E8F5E9", icon: "🔥" },
-          { label: "This Month", value: "24", sub: "Total workouts", accent: "var(--color-coral)", bg: "rgba(223, 108, 118, 0.12)", icon: "📅" },
-          { label: "Sets Completed", value: "186", sub: "Total sets", accent: "var(--color-plum)", bg: "rgba(74, 44, 78, 0.1)", icon: "✓" },
-          { label: "Weight Change", value: "-1.8 kg", sub: "Since starting", accent: "#2E7D32", bg: "#E8F5E9", icon: "↓" },
+          { label: "Current Streak", value: `${kpiSummary.currentStreak} Days`, sub: "Keep it up!", accent: "#2E7D32", bg: "#E8F5E9", icon: "🔥" },
+          { label: "This Month", value: `${kpiSummary.workoutsThisMonth}`, sub: "Total workouts", accent: "var(--color-coral)", bg: "rgba(223, 108, 118, 0.12)", icon: "📅" },
+          { label: "Sets Completed", value: `${kpiSummary.totalSets}`, sub: "Total sets", accent: "var(--color-plum)", bg: "rgba(74, 44, 78, 0.1)", icon: "✓" },
+          { label: "Total Active Days", value: `${kpiSummary.totalActiveDays}`, sub: "All-time workouts", accent: "#2E7D32", bg: "#E8F5E9", icon: "💪" },
         ].map((card) => (
           <div key={card.label} style={{ background: "#fff", borderRadius: 12, padding: "20px", border: "1px solid #D9DDE3", position: "relative", overflow: "hidden" }}>
             <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
@@ -98,22 +188,22 @@ export default function DashboardPage() {
         <div style={{ background: "#fff", borderRadius: 12, padding: 24, border: "1px solid #D9DDE3" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
             <h2 style={{ fontSize: 18, fontWeight: 700, color: "#2A2D34", margin: 0 }}>Today&apos;s Workout</h2>
-            <span style={{ background: "rgba(223, 108, 118, 0.12)", color: "var(--color-coral)", fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 20 }}>Upper Body</span>
+            <span style={{ background: "rgba(223, 108, 118, 0.12)", color: "var(--color-coral)", fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 20 }}>{todaySummary.category}</span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-            <span style={{ fontSize: 13, color: "#6B7280" }}>6 Exercises</span>
+            <span style={{ fontSize: 13, color: "#6B7280" }}>{todaySummary.uniqueExercises} Exercises</span>
             <span style={{ color: "#D9DDE3" }}>•</span>
-            <span style={{ fontSize: 13, color: "#6B7280" }}>~32 min</span>
+            <span style={{ fontSize: 13, color: "#6B7280" }}>~{todaySummary.estimatedTimeMin} min</span>
             <span style={{ color: "#D9DDE3" }}>•</span>
-            <span style={{ fontSize: 13, color: "#6B7280" }}>18 Sets</span>
+            <span style={{ fontSize: 13, color: "#6B7280" }}>{todaySummary.totalSets} Sets</span>
           </div>
           <div style={{ marginBottom: 16 }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
               <span style={{ fontSize: 13, color: "#6B7280" }}>Progress</span>
-              <span style={{ fontSize: 13, fontWeight: 700, color: "var(--color-coral)" }}>65% Complete</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "var(--color-coral)" }}>{todaySummary.progressPercent}% Complete</span>
             </div>
             <div style={{ height: 8, borderRadius: 4, background: "#F4F5F7", overflow: "hidden" }}>
-              <div style={{ width: "65%", height: "100%", background: "linear-gradient(90deg, var(--color-plum), var(--color-coral))", borderRadius: 4 }} />
+              <div style={{ width: `${todaySummary.progressPercent}%`, height: "100%", background: "linear-gradient(90deg, var(--color-plum), var(--color-coral))", borderRadius: 4, transition: "width 0.5s ease-out" }} />
             </div>
           </div>
           <div style={{ display: "flex", gap: 12 }}>
@@ -136,39 +226,54 @@ export default function DashboardPage() {
         <div style={{ background: "#fff", borderRadius: 12, padding: 24, border: "1px solid #D9DDE3" }}>
           <h2 style={{ fontSize: 18, fontWeight: 700, color: "#2A2D34", margin: "0 0 16px" }}>Weekly Activity</h2>
           <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
-            {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, i) => {
-              const done = [0, 1, 2, 3, 4].includes(i);
-              const todayIndex = 1; // Assuming Tuesday is "today" for this UI mockup
-              const today = i === todayIndex;
+            {weeklySummary.days.map((dayObj) => {
+              const { dayName, isToday, performance } = dayObj;
+              const done = performance > 0;
+              
+              let opacity = 0.12; // default
+              if (performance > 0 && performance <= 5) opacity = 0.4;
+              else if (performance > 5 && performance <= 10) opacity = 0.7;
+              else if (performance > 10) opacity = 1.0;
+
+              let bgColor = "#F4F5F7";
+              let textColor = "var(--color-coral)";
+              if (done) {
+                bgColor = `rgba(223, 108, 118, ${opacity})`;
+                textColor = opacity > 0.6 ? "#fff" : "var(--color-coral)";
+              } else if (isToday) {
+                bgColor = "#F4F5F7";
+              }
+
               return (
-                <div key={day} style={{ flex: 1, textAlign: "center" }}>
-                  <div style={{ fontSize: 10, color: today ? "var(--color-coral)" : "#6B7280", fontWeight: today ? 700 : 500, marginBottom: 6 }}>{day}</div>
+                <div key={dayName} style={{ flex: 1, textAlign: "center" }}>
+                  <div style={{ fontSize: 10, color: isToday ? "var(--color-coral)" : "#6B7280", fontWeight: isToday ? 700 : 500, marginBottom: 6 }}>{dayName}</div>
                   <div style={{
                     width: "100%",
                     aspectRatio: "1",
                     borderRadius: 8,
-                    background: done ? (today ? "var(--color-coral)" : "rgba(223, 108, 118, 0.12)") : "#F4F5F7",
-                    border: today ? "2px solid var(--color-coral)" : "1.5px solid rgba(223, 108, 118, 0.2)",
+                    background: bgColor,
+                    border: isToday ? "2px solid var(--color-coral)" : (done ? "1.5px solid rgba(223, 108, 118, 0.2)" : "1.5px solid transparent"),
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     fontSize: 12,
                     fontWeight: 700,
-                    color: today ? "#fff" : "var(--color-coral)",
+                    color: textColor,
+                    transition: "all 0.3s"
                   }}>
-                    {done ? (today ? "●" : "✓") : ""}
+                    {done ? (isToday ? "●" : "✓") : ""}
                   </div>
-                  {done && <div style={{ width: 4, height: 4, borderRadius: "50%", background: today ? "var(--color-coral)" : "var(--color-mauve)", margin: "4px auto 0" }} />}
+                  {done && <div style={{ width: 4, height: 4, borderRadius: "50%", background: isToday ? "var(--color-coral)" : "var(--color-mauve)", margin: "4px auto 0" }} />}
                 </div>
               );
             })}
           </div>
           <div style={{ background: "linear-gradient(135deg, rgba(223, 108, 118, 0.12), rgba(158, 104, 150, 0.12))", borderRadius: 10, padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", border: "1px solid rgba(223, 108, 118, 0.2)" }}>
             <div>
-              <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "var(--color-plum)" }}>🔥 7-day streak!</p>
-              <p style={{ margin: "2px 0 0", fontSize: 12, color: "#6B7280" }}>Best: 12 days</p>
+              <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "var(--color-plum)" }}>🔥 {weeklySummary.activeDaysThisWeek} active days!</p>
+              <p style={{ margin: "2px 0 0", fontSize: 12, color: "#6B7280" }}>This week</p>
             </div>
-            <div style={{ fontSize: 28, fontWeight: 800, color: "var(--color-coral)" }}>7</div>
+            <div style={{ fontSize: 28, fontWeight: 800, color: "var(--color-coral)" }}>{weeklySummary.activeDaysThisWeek}</div>
           </div>
         </div>
       </div>
@@ -261,6 +366,21 @@ export default function DashboardPage() {
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
               const isActive = rpe === num;
+              
+              const colorGradient = [
+                "#4ade80", // 1 (Green)
+                "#22c55e", // 2 (Darker Green)
+                "#84cc16", // 3 (Lime)
+                "#eab308", // 4 (Yellow)
+                "#f59e0b", // 5 (Amber/Orange-Yellow)
+                "#f97316", // 6 (Orange)
+                "#ea580c", // 7 (Dark Orange)
+                "#ef4444", // 8 (Red)
+                "#dc2626", // 9 (Dark Red)
+                "#991b1b"  // 10 (Very Dark Red)
+              ];
+              const activeColor = colorGradient[num - 1];
+
               return (
                 <button 
                   key={num} 
@@ -269,8 +389,8 @@ export default function DashboardPage() {
                     width: 40, 
                     height: 40, 
                     borderRadius: 8, 
-                    border: isActive ? "1px solid var(--color-plum)" : "1px solid #D9DDE3", 
-                    background: isActive ? "var(--color-plum)" : "#fff", 
+                    border: isActive ? `1px solid ${activeColor}` : "1px solid #D9DDE3", 
+                    background: isActive ? activeColor : "#fff", 
                     color: isActive ? "#fff" : "#6B7280", 
                     fontSize: 15, 
                     fontWeight: 600, 
@@ -280,9 +400,9 @@ export default function DashboardPage() {
                   }}
                   onMouseEnter={(e) => { 
                     if (!isActive) {
-                      e.currentTarget.style.borderColor = "var(--color-plum)"; 
-                      e.currentTarget.style.color = "var(--color-plum)"; 
-                      e.currentTarget.style.background = "rgba(74, 44, 78, 0.05)"; 
+                      e.currentTarget.style.borderColor = activeColor; 
+                      e.currentTarget.style.color = activeColor; 
+                      e.currentTarget.style.background = activeColor + "1A"; // 10% opacity hex
                     }
                   }}
                   onMouseLeave={(e) => { 
@@ -303,16 +423,25 @@ export default function DashboardPage() {
         {/* Notes */}
         <div style={{ marginBottom: 24 }}>
           <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", marginBottom: 8 }}>Notes</label>
-          <textarea placeholder="Add form notes, cues, or observations..." rows={3} style={{ width: "100%", padding: "16px", borderRadius: 8, border: "1px solid #D9DDE3", background: "#fff", color: "#2A2D34", fontSize: 15, outline: "none", resize: "vertical", fontFamily: "inherit" }}></textarea>
+          <textarea 
+            value={notes} 
+            onChange={(e) => setNotes(e.target.value)} 
+            placeholder="Add form notes, cues, or observations..." 
+            rows={3} 
+            style={{ width: "100%", padding: "16px", borderRadius: 8, border: "1px solid #D9DDE3", background: "#fff", color: "#2A2D34", fontSize: 15, outline: "none", resize: "vertical", fontFamily: "inherit" }}
+          ></textarea>
         </div>
 
         {/* Footer */}
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <button style={{ padding: "12px 24px", background: "var(--color-coral)", color: "#fff", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 15, cursor: "pointer", boxShadow: "0 4px 12px rgba(223, 108, 118, 0.3)", transition: "all 0.2s" }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 6px 16px rgba(223, 108, 118, 0.4)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 12px rgba(223, 108, 118, 0.3)"; }}
+          <button 
+            disabled={isSubmitting}
+            onClick={handleSaveSet}
+            style={{ padding: "12px 24px", background: isSubmitting ? "#9CA3AF" : "var(--color-coral)", color: "#fff", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 15, cursor: isSubmitting ? "not-allowed" : "pointer", boxShadow: "0 4px 12px rgba(223, 108, 118, 0.3)", transition: "all 0.2s" }}
+            onMouseEnter={(e) => { if(!isSubmitting){ e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 6px 16px rgba(223, 108, 118, 0.4)"; } }}
+            onMouseLeave={(e) => { if(!isSubmitting){ e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 12px rgba(223, 108, 118, 0.3)"; } }}
           >
-            Save Set
+            {isSubmitting ? "Saving..." : "Save Set"}
           </button>
           <span style={{ fontSize: 14, color: "#9CA3AF" }}>Logged to today&apos;s session</span>
         </div>

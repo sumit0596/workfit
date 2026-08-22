@@ -3,12 +3,14 @@
 import { useState, FormEvent, useEffect } from "react";
 import ReusableInput from "@/components/ui/ReusableInput";
 import styles from "./LoginForm.module.css";
+import { useToast } from "@/components/ui/ToastContext";
 
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const router = useRouter();
+  const { showToast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -28,17 +30,18 @@ export default function LoginForm() {
       });
 
       if (res?.error) {
-        alert(`Login Failed: ${res.error}`);
+        showToast(`Login Failed: ${res.error}`, "error");
         return;
       }
 
       // If successful, redirect to the dashboard
       if (res?.ok) {
+        showToast("Login successful!", "success");
         router.push("/dashboard");
       }
     } catch (error) {
       console.error("Login error:", error);
-      alert("An error occurred during login.");
+      showToast("An error occurred during login.", "error");
     }
   };
 

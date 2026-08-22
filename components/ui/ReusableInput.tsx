@@ -33,7 +33,7 @@ export default function ReusableInput({
 }: ReusableInputProps) {
   const [error, setError] = useState<string>("");
   const [touched, setTouched] = useState<boolean>(false);
-  
+
   // New state to toggle password visibility
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -152,10 +152,10 @@ export default function ReusableInput({
 
   return (
     <div className="mb-3">
-      <label style={labelStyles}>
+      <label className="form-label" style={labelStyles}>
         {label} {required && <span className="text-danger">*</span>}
       </label>
-      
+
       {/* Relative wrapper for absolute icon positioning */}
       <div style={{ position: "relative" }}>
         <input
@@ -167,7 +167,7 @@ export default function ReusableInput({
           onBlur={handleBlur}
           style={{ ...inputStyles, width: "100%", outline: "none", background: "#fff", color: "#2A2D34", borderColor: error ? "#dc3545" : "#D9DDE3" }}
         />
-        
+
         {/* Render the eye icon only for password types */}
         {type === "password" && (
           <div
