@@ -4,6 +4,7 @@ import Sidebar from "@/components/ui/Sidebar";
 import BottomNav from "@/components/ui/BottomNav";
 import Header from "@/components/ui/Header";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import styles from "./layout.module.css";
 
 export default function DashboardLayout({
@@ -11,6 +12,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -27,6 +29,7 @@ export default function DashboardLayout({
   }, []);
 
   const showSidebar = !isMobile;
+  const showHeader = isMobile || pathname === "/dashboard";
 
   return (
     <div className={styles.layoutContainer}>
@@ -38,7 +41,7 @@ export default function DashboardLayout({
       <main
         className={`${styles.mainContent} ${showSidebar ? styles.mainContentDesktop : ""} ${isMobile ? styles.mainContentMobile : ""}`}
       >
-        <Header />
+        {showHeader && <Header />}
         {children}
       </main>
 

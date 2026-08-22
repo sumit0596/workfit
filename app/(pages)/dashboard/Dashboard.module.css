@@ -1,6 +1,7 @@
 .pageContainer {
   padding: 32px 32px 40px;
 }
+
 .pageContainerMobile {
   padding: 20px 16px 100px;
 }
@@ -11,6 +12,7 @@
   gap: 16px;
   margin-bottom: 24px;
 }
+
 .kpiGridMobile {
   grid-template-columns: 1fr 1fr;
 }
@@ -23,11 +25,13 @@
   position: relative;
   overflow: hidden;
 }
+
 .kpiCardInner {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
 }
+
 .kpiLabel {
   font-size: 12px;
   color: #6B7280;
@@ -36,20 +40,24 @@
   text-transform: uppercase;
   margin: 0;
 }
+
 .kpiValue {
   font-size: 26px;
   font-weight: 700;
   margin: 8px 0 4px;
   line-height: 1;
 }
+
 .kpiValueMobile {
   font-size: 22px;
 }
+
 .kpiSub {
   font-size: 12px;
   color: #6B7280;
   margin: 0;
 }
+
 .kpiIconWrapper {
   width: 36px;
   height: 36px;
@@ -65,6 +73,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 24px;
 }
+
 .mainGridMobile {
   grid-template-columns: 1fr;
 }
@@ -75,21 +84,25 @@
   padding: 24px;
   border: 1px solid #D9DDE3;
 }
+
 .cardHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
 }
+
 .cardTitle {
   font-size: 18px;
   font-weight: 700;
   color: #2A2D34;
   margin: 0;
 }
+
 .cardTitleSpaced {
   margin: 0 0 16px;
 }
+
 .categoryBadge {
   background: rgba(223, 108, 118, 0.12);
   color: var(--color-coral);
@@ -98,16 +111,19 @@
   padding: 4px 10px;
   border-radius: 20px;
 }
+
 .statsRow {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 16px;
 }
+
 .statText {
   font-size: 13px;
   color: #6B7280;
 }
+
 .statDivider {
   color: #D9DDE3;
 }
@@ -115,32 +131,38 @@
 .progressWrapper {
   margin-bottom: 16px;
 }
+
 .progressHeader {
   display: flex;
   justify-content: space-between;
   margin-bottom: 6px;
 }
+
 .progressTextComplete {
   font-size: 13px;
   font-weight: 700;
   color: var(--color-coral);
 }
+
 .progressBarBg {
   height: 8px;
   border-radius: 4px;
   background: #F4F5F7;
   overflow: hidden;
 }
+
 .progressBarFill {
   height: 100%;
   background: linear-gradient(90deg, var(--color-plum), var(--color-coral));
   border-radius: 4px;
   transition: width 0.5s ease-out;
 }
+
 .btnGroup {
   display: flex;
   gap: 12px;
 }
+
 .primaryBtn {
   flex: 1;
   padding: 12px;
@@ -152,6 +174,7 @@
   font-size: 14px;
   cursor: pointer;
 }
+
 .outlineBtn {
   padding: 12px 16px;
   background: transparent;
@@ -168,22 +191,27 @@
   gap: 8px;
   margin-bottom: 20px;
 }
+
 .dayCol {
   flex: 1;
   text-align: center;
 }
+
 .dayLabel {
   font-size: 10px;
   margin-bottom: 6px;
 }
+
 .dayLabelToday {
   color: var(--color-coral);
   font-weight: 700;
 }
+
 .dayLabelNormal {
   color: #6B7280;
   font-weight: 500;
 }
+
 .dayBox {
   width: 100%;
   aspect-ratio: 1;
@@ -195,12 +223,14 @@
   font-weight: 700;
   transition: all 0.3s;
 }
+
 .dayDot {
   width: 4px;
   height: 4px;
   border-radius: 50%;
   margin: 4px auto 0;
 }
+
 .weeklySummaryBanner {
   background: linear-gradient(135deg, rgba(223, 108, 118, 0.12), rgba(158, 104, 150, 0.12));
   border-radius: 10px;
@@ -210,17 +240,20 @@
   align-items: center;
   border: 1px solid rgba(223, 108, 118, 0.2);
 }
+
 .bannerTitle {
   margin: 0;
   font-size: 13px;
   font-weight: 700;
   color: var(--color-plum);
 }
+
 .bannerSub {
   margin: 2px 0 0;
   font-size: 12px;
   color: #6B7280;
 }
+
 .bannerValue {
   font-size: 28px;
   font-weight: 800;
@@ -234,12 +267,14 @@
   border: 1px solid #D9DDE3;
   margin-top: 24px;
 }
+
 .logHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 24px;
 }
+
 .logSubTitle {
   font-size: 11px;
   font-weight: 700;
@@ -248,12 +283,14 @@
   letter-spacing: 0.05em;
   margin: 0 0 4px;
 }
+
 .logTitle {
   font-size: 24px;
   font-weight: 700;
   color: #2A2D34;
   margin: 0;
 }
+
 .sessionBadge {
   background: #F3F4F6;
   color: #6B7280;
@@ -269,15 +306,18 @@
   gap: 24px;
   margin-bottom: 24px;
 }
+
 .formGrid2Mobile {
   grid-template-columns: 1fr;
 }
+
 .formGrid3 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 24px;
   margin-bottom: 24px;
 }
+
 .formGrid3Mobile {
   grid-template-columns: 1fr;
 }
@@ -285,6 +325,7 @@
 .fieldGroup {
   margin-bottom: 24px;
 }
+
 .fieldLabel {
   display: block;
   font-size: 12px;
@@ -299,6 +340,7 @@
   gap: 8px;
   flex-wrap: wrap;
 }
+
 .rpeBtn {
   width: 40px;
   height: 40px;
@@ -312,7 +354,9 @@
   background: #fff;
   color: #6B7280;
 }
-.rpeBtn:hover, .rpeBtnActive {
+
+.rpeBtn:hover,
+.rpeBtnActive {
   border-color: var(--rpe-color, #D9DDE3);
   color: var(--rpe-color, #6B7280);
   background-color: var(--rpe-bg, #fff);
@@ -336,6 +380,7 @@
   align-items: center;
   gap: 16px;
 }
+
 .saveBtn {
   padding: 12px 24px;
   color: #fff;
@@ -348,16 +393,19 @@
   transition: all 0.2s;
   background: var(--color-coral);
 }
+
 .saveBtn:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(223, 108, 118, 0.4);
 }
+
 .saveBtn:disabled {
   background: #9CA3AF;
   cursor: not-allowed;
   box-shadow: none;
   transform: none;
 }
+
 .footerText {
   font-size: 14px;
   color: #9CA3AF;
